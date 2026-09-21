@@ -1,37 +1,55 @@
-﻿Car Dealership Management System (Java DAO & MySQL via JDBC)
+# 🚗 Concesionario de Vehículos – Java DAO & MySQL (JDBC)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java" />
   <img src="https://img.shields.io/badge/Database-MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
-  <img src="https://img.shields.io/badge/Pattern-DAO_(Data_Access_Object)-047857?style=for-the-badge" alt="DAO" />
-  <img src="https://img.shields.io/badge/Academic-1Âº_DAW_STUCOM-10B981?style=for-the-badge" alt="STUCOM" />
+  <img src="https://img.shields.io/badge/Pattern-DAO_Architecture-007396?style=for-the-badge" alt="DAO Pattern" />
+  <img src="https://img.shields.io/badge/Academic-1º_DAW_STUCOM-10B981?style=for-the-badge" alt="STUCOM" />
 </p>
-**Academic Project Notice:** Evaluative project for the **1st year of Web Application Development (DAW)** at **STUCOM Pelai** (Barcelona) within the Data Access module (MP0485 RA9: Relational Database Persistence).
+
+> 🎓 **Proyecto Académico:** Desarrollado como práctica evaluativa para el **Resultado de Aprendizaje 9 (MP0485 RA9 - Persistencia en Bases de Datos Relacionales)** en **STUCOM Pelai** (Barcelona), 1º Grado Superior en Desarrollo de Aplicaciones Web (DAW).
 
 ---
 
-## Overview / DescripciÃ³n General
+## Descripción del Proyecto
 
-### English
-An enterprise-style vehicle dealership persistence application in **Java**. It adopts the **DAO (Data Access Object)** design pattern to cleanly decouple business logic from the **MySQL** relational database layer accessed through **JDBC**.
-
-### EspaÃ±ol
-AplicaciÃ³n de gestiÃ³n de concesionario de vehÃ­culos en **Java** con persistencia relacional. Aplica el patrÃ³n de diseÃ±o **DAO (Data Access Object)** e interfaces para desacoplar completamente la lÃ³gica de negocio del acceso a la base de datos **MySQL** mediante **JDBC**.
+Sistema integral de gestión de un concesionario de vehículos desarrollado en **Java**, implementando el patrón de diseño **DAO (Data Access Object)** para desacoplar completamente la capa de persistencia relacional en **MySQL** de la lógica de negocio y las vistas.
 
 ---
 
-## Architectural Highlights
+## Arquitectura del Proyecto
 
-- **IDAO.java (Interface):** Defines the strict CRUD contract for persistence operations.
-- **DAOSQL.java:** JDBC implementation managing prepared statements, connection lifecycles, transactions, and SQL error mapping.
-- **Custom Exceptions:** Domain-specific exceptions (DAO_Excep, Read_SQL_DAO_Excep, Vehicle_Excep) preventing data corruption.
-- **Concesionario.java & Vehiculo.java:** Core business entities with full validation.
+```
+src/main/java/
+├── controller/
+│   └── Concesionario.java        # Controlador que orquesta las operaciones del sistema
+├── dao/
+│   ├── IDAO.java                 # Interfaz que define las operaciones CRUD del repositorio
+│   └── DAOSQL.java               # Implementación JDBC con consultas SQL preparadas
+├── model/
+│   └── Vehiculo.java             # Entidad Vehículo con sus atributos y getters/setters
+└── main/
+    └── main.java                 # Punto de entrada de la aplicación
+```
 
 ---
 
-## Database Setup
+## Patrón DAO e Interfaz `IDAO`
 
-`sql
+El acceso a la base de datos se abstrae mediante la interfaz `IDAO`:
+- `insertarVehiculo(Vehiculo v)`: Inserta un nuevo registro mediante `PreparedStatement` para prevenir inyecciones SQL.
+- `obtenerVehiculos()`: Recupera la lista completa de vehículos mediante `ResultSet`.
+- `buscarPorMatricula(String matricula)`: Consulta filtrada por clave única.
+- `eliminarVehiculo(String matricula)`: Baja lógica o física del vehículo en la base de datos.
+
+---
+
+## Requisitos y Configuración de Base de Datos
+
+1. Disponer de un servidor **MySQL** activo (puerto por defecto `3306`).
+2. Crear la base de datos y la tabla de vehículos:
+
+```sql
 CREATE DATABASE IF NOT EXISTS concesionario;
 USE concesionario;
 
@@ -39,24 +57,29 @@ CREATE TABLE IF NOT EXISTS vehiculos (
     matricula VARCHAR(10) PRIMARY KEY,
     marca VARCHAR(50) NOT NULL,
     modelo VARCHAR(50) NOT NULL,
-    precio DECIMAL(10,2) NOT NULL,
-    fecha_ingreso DATE
+    precio DOUBLE NOT NULL
 );
-`
+```
+
+3. Configurar credenciales de conexión en `DAOSQL.java`:
+   - URL: `jdbc:mysql://localhost:3306/concesionario`
+   - Usuario: `root`
+   - Contraseña: *(la configurada en tu entorno local)*
 
 ---
 
-##  How to Run
+## Compilación y Ejecución
 
-1. Configure your MySQL credentials in DAOSQL.java (or connection config).
-2. Run via Maven:
-   `ash
-   mvn clean compile
-   mvn exec:java -Dexec.mainClass="com.mycompany.concesionario.Concesionario"
-   `
+```bash
+# Compilar con Maven
+mvn clean compile
+
+# Ejecutar
+mvn exec:java -Dexec.mainClass="main.main"
+```
 
 ---
 
-##  License
+## Licencia
 
-Distributed under the **MIT License**.
+Distribuido bajo la **Licencia MIT**.
